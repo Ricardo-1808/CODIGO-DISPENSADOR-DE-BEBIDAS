@@ -1,0 +1,79 @@
+// Definir pines para el sensor ultrasónico
+const int trig1 = 9;
+const int echo1 = 10;
+const int trig2 = 11;
+const int echo2 = 12;
+
+// Definir pin para la válvula solenoide
+const int motor1 = 7;
+const int motor2 = 8;
+
+// Distancia de activación (en cm)
+const int distanciaActivacion = 4;
+
+// Variables para la duración y la distancia
+long duracion1;
+long duracion2;
+int distancia1;
+int distancia2;
+
+void setup() {
+  pinMode(trig1, OUTPUT); // TRIG como salida
+  pinMode(echo1, INPUT);  // ECHO como entrada
+  pinMode(trig2, OUTPUT); // TRIG como salida
+  pinMode(echo2, INPUT);  // ECHO como entrada
+  pinMode(motor1, OUTPUT); // Válvula como salida
+  pinMode(motor2, OUTPUT); // Válvula como salida
+  digitalWrite(motor1, HIGH); // Asegurarse de que la válvula 1 esté cerrada al inicio
+  digitalWrite(motor2, HIGH); // Asegurarse de que la válvula 2 esté cerrada al inicio
+}
+
+void loop() {
+  //--------------------Sensor 1--------------------
+  // Limpia el pin TRIG
+  digitalWrite(trig1, LOW);
+  delayMicroseconds(2);
+  // Establece el pin TRIG en estado alto por 10 microsegundos
+  digitalWrite(trig1, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trig1, LOW);
+
+  // Lee el tiempo que tarda el eco en volver
+  duracion1 = pulseIn(echo1, HIGH);
+  
+  // Calcula la distancia
+  distancia1 = duracion1 * 0.034 / 2;
+  delay(100);
+  //---------------------Sensor 2---------------------
+  // Limpia el pin TRIG
+  digitalWrite(trig2, LOW);
+  delayMicroseconds(2);
+  // Establece el pin TRIG en estado alto por 10 microsegundos
+  digitalWrite(trig2, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trig2, LOW);
+
+  // Lee el tiempo que tarda el eco en volver
+  duracion2 = pulseIn(echo2, HIGH);
+  
+  // Calcula la distancia
+  distancia2 = duracion2 * 0.034 / 2;
+  delay(100);
+  //--------------------activación válvula 1-------------------
+
+  // Si detecta un objeto a la distancia adecuada, activa la válvula
+  if (distancia1 <= distanciaActivacion) {
+    digitalWrite(motor1, LOW); // enciende la válvula 1
+  } else {
+    digitalWrite(motor1, HIGH); // apaga la válvula 1
+  }
+
+  //--------------------activación válvula 2-------------------
+
+  // Si detecta un objeto a la distancia adecuada, activa la válvula
+  if (distancia2 <= distanciaActivacion) {
+    digitalWrite(motor2, LOW); // enciende la válvula 2
+  } else {
+    digitalWrite(motor2, HIGH); // apaga la válvula 2
+  }
+}
